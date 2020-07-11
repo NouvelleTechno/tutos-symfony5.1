@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use FOS\CKEditorBundle\Form\Type\CKEditorType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 
 class AnnoncesType extends AbstractType
 {
@@ -22,6 +23,14 @@ class AnnoncesType extends AbstractType
             ->add('content', CKEditorType::class)
             ->add('categories', EntityType::class, [
                 'class' => Categories::class
+            ])
+            // On ajoute le champ "images" dans le formulaire
+            // Il n'est pas lié à la base de données (mapped à false)
+            ->add('images', FileType::class,[
+                'label' => false,
+                'multiple' => true,
+                'mapped' => false,
+                'required' => false
             ])
             ->add('Valider', SubmitType::class)
         ;
