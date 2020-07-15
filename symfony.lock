@@ -105,6 +105,9 @@
             "./config/packages/fos_ckeditor.yaml"
         ]
     },
+    "imagine/imagine": {
+        "version": "1.2.3"
+    },
     "laminas/laminas-code": {
         "version": "3.4.1"
     },
@@ -113,6 +116,19 @@
     },
     "laminas/laminas-zendframework-bridge": {
         "version": "1.0.4"
+    },
+    "liip/imagine-bundle": {
+        "version": "1.8",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "master",
+            "version": "1.8",
+            "ref": "5a5bdc2d0e2533ed6935d5ae562f2b318a8fc1ee"
+        },
+        "files": [
+            "./config/packages/liip_imagine.yaml",
+            "./config/routes/liip_imagine.yaml"
+        ]
     },
     "monolog/monolog": {
         "version": "2.1.0"
@@ -456,6 +472,9 @@
     "symfony/string": {
         "version": "v5.1.1"
     },
+    "symfony/templating": {
+        "version": "v5.1.2"
+    },
     "symfony/test-pack": {
         "version": "v1.0.6"
     },
@@ -551,6 +570,9 @@
     },
     "twig/extra-bundle": {
         "version": "v3.0.3"
+    },
+    "twig/string-extra": {
+        "version": "v3.0.4"
     },
     "twig/twig": {
         "version": "v3.0.3"

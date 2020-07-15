@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{annonce.title}}{% endblock %}
+{% block stylesheets %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" />
+{% endblock %}
+{% block body %}
+	<div class="container">
+		<div class="caroulix" id="carousel">
+			<div class="caroulix-arrow caroulix-prev">
+				<i class="fas fa-chevron-left"></i>
+			</div>
+			<div class="caroulix-arrow caroulix-next">
+				<i class="fas fa-chevron-right"></i>
+			</div>
+            {% for image in annonce.images %}
+                <div class="caroulix-item">
+                    <img src="{{ asset('uploads/images/annonces/' ~ image.name)|imagine_filter('banniere') }}" alt="{{ annonce.title }}"/>
+                </div>
+            {% endfor %}
+		</div>
+		<div class="grix xs2 sm3 gutter-0 card">
+			<div class="primary flex vcenter fx-center">
+			</div>
+			<div class="col-sm2">
+				<div class="card-header">{{ annonce.title }}</div>
+				<div class="card-content">
+					<p>Catégorie :
+						{{ annonce.categories.name }}</p>
+					<p>
+						{{ annonce.content|raw }}
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+let caroulix = new Caroulix('#carousel');
+</script>
+{% endblock %}
