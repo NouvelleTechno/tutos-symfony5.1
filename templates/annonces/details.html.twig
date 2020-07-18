@@ -1,11 +1,17 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{annonce.title}}{% endblock %}
+{% block title %}
+	{{annonce.title}}
+{% endblock %}
 {% block stylesheets %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css"/>
 {% endblock %}
 {% block body %}
 	<div class="container">
+	    {% for message in app.flashes('message') %}
+       		<div class="p-3 my-2 rounded-2 success">{{ message }}</div>
+    	{% endfor %}
+
 		<div class="caroulix" id="carousel">
 			<div class="caroulix-arrow caroulix-prev">
 				<i class="fas fa-chevron-left"></i>
@@ -13,15 +19,14 @@
 			<div class="caroulix-arrow caroulix-next">
 				<i class="fas fa-chevron-right"></i>
 			</div>
-            {% for image in annonce.images %}
-                <div class="caroulix-item">
-                    <img src="{{ asset('uploads/images/annonces/' ~ image.name)|imagine_filter('banniere') }}" alt="{{ annonce.title }}"/>
-                </div>
-            {% endfor %}
+			{% for image in annonce.images %}
+				<div class="caroulix-item">
+					<img src="{{ asset('uploads/images/annonces/' ~ image.name)|imagine_filter('banniere') }}" alt="{{ annonce.title }}"/>
+				</div>
+			{% endfor %}
 		</div>
 		<div class="grix xs2 sm3 gutter-0 card">
-			<div class="primary flex vcenter fx-center">
-			</div>
+			<div class="primary flex vcenter fx-center"></div>
 			<div class="col-sm2">
 				<div class="card-header">{{ annonce.title }}</div>
 				<div class="card-content">
@@ -30,14 +35,38 @@
 					<p>
 						{{ annonce.content|raw }}
 					</p>
+					<p>
+						<button class="btn primary press modal-trigger" data-target="modale-contact">Contacter l'annonceur</button>
+					</p>
 				</div>
 			</div>
 		</div>
 	</div>
+
+	<div class="modal white falling" id="modale-contact">
+		<div class="modal-header">Contacter l'annonceur</div>
+		<div class="divider"></div>
+		{{ form_start(form) }}
+		<div class="modal-content">
+			{{ form_widget(form.title) }}
+			{{ form_row(form.email) }}
+			{{ form_row(form.message) }}
+		</div>
+		<div class="divider"></div>
+		<div class="modal-footer">
+			<button class="btn small primary">Envoyer</button>
+			<button data-target="modale-contact" class="btn small secondary modal-trigger">Fermer</button>
+		</div>
+		{{ form_end(form) }}
+	</div>
 {% endblock %}
 
 {% block javascripts %}
-<script>
-let caroulix = new Caroulix('#carousel');
-</script>
+	<script>
+		window.onload = () => {
+			document.querySelector("#annonce_contact_title").value = "{{ annonce.title|raw }}"
+		}
+		let caroulix = new Caroulix('#carousel');
+		let modal = new Modal('#modale-contact');
+	</script>
 {% endblock %}
