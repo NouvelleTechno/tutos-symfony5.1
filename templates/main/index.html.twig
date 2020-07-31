@@ -23,15 +23,18 @@
 					</p>
 					<div class="txt-red">
 						{% if is_granted("ROLE_USER") %}
+                            {% set isFavorite = false %}
 							{% for favoris in annonce.favoris %}
 								{% if favoris.id == app.user.id %}
-									<a href="{{ path('annonces_retrait_favoris', {id: annonce.id}) }}"><i class="fas fa-heart"></i></a>
-								{% else %}
-									<a href="{{ path('annonces_ajout_favoris', {id: annonce.id}) }}"><i class="far fa-heart"></i></a>
-								{% endif %}
-							{% else %}
-								<a href="{{ path('annonces_ajout_favoris', {id: annonce.id}) }}"><i class="far fa-heart"></i></a>
+                                    {% set isFavorite = true %}
+								{% endif %}    
 							{% endfor %}
+                            {% if isFavorite %}
+								<a href="{{ path('annonces_ajout_favoris', {id: annonce.id}) }}"><i class="fas fa-heart"></i></a>
+                            {% else %}
+								<a href="{{ path('annonces_ajout_favoris', {id: annonce.id}) }}"><i class="far fa-heart"></i></a>
+                            {% endif %}
+
 						{% else %}
 							<i class="far fa-heart"></i>
 						{% endif %}
