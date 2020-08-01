@@ -30,7 +30,7 @@
 								{% endif %}    
 							{% endfor %}
                             {% if isFavorite %}
-								<a href="{{ path('annonces_ajout_favoris', {id: annonce.id}) }}"><i class="fas fa-heart"></i></a>
+								<a href="{{ path('annonces_retrait_favoris', {id: annonce.id}) }}"><i class="fas fa-heart"></i></a>
                             {% else %}
 								<a href="{{ path('annonces_ajout_favoris', {id: annonce.id}) }}"><i class="far fa-heart"></i></a>
                             {% endif %}
