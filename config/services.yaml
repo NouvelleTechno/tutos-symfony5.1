@@ -5,6 +5,8 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     images_directory: '%kernel.project_dir%/public/uploads/images/annonces'
+    maintenanceFilePath: '%kernel.project_dir%/public/.maintenance'
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -25,3 +27,9 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+    App\EventListener\MaintenanceListener:
+        arguments:
+            - '%maintenanceFilePath%'
+            - '@twig'
+        tags:
+            - { name: kernel.event_listener, event: kernel.request }
