@@ -19,6 +19,27 @@ use Symfony\Component\Routing\Annotation\Route;
 class AnnoncesController extends AbstractController
 {
     /**
+     * @Route("/", name="liste")
+     * @return void 
+     */
+    public function index(AnnoncesRepository $annoncesRepo, Request $request){
+        // On définit le nombre d'éléments par page
+        $limit = 2;
+
+        // On récupère le numéro de page
+        $page = (int)$request->query->get("page", 1);
+
+        // On récupère les annonces de la page
+        $annonces = $annoncesRepo->getPaginatedAnnonces($page, $limit);
+
+        // On récupère le nombre total d'annonces
+        $total = $annoncesRepo->getTotalAnnonces();
+ 
+        return $this->render('annonces/index.html.twig', compact('annonces', 'total', 'limit', 'page'));
+    }
+
+
+    /**
      * @Route("/details/{slug}", name="details")
      */
     public function details($slug, AnnoncesRepository $annoncesRepo, Request $request, MailerInterface $mailer)

@@ -43,12 +43,67 @@ class AnnoncesRepository extends ServiceEntityRepository
      * @return void 
      */
     public function countByDate(){
+        // $query = $this->createQueryBuilder('a')
+        //     ->select('SUBSTRING(a.created_at, 1, 10) as dateAnnonces, COUNT(a) as count')
+        //     ->groupBy('dateAnnonces')
+        // ;
+        // return $query->getQuery()->getResult();
+        $query = $this->getEntityManager()->createQuery("
+            SELECT SUBSTRING(a.created_at, 1, 10) as dateAnnonces, COUNT(a) as count FROM App\Entity\Annonces a GROUP BY dateAnnonces
+        ");
+        return $query->getResult();
+    }
+
+    /**
+     * Returns Annonces between 2 dates
+     */
+    public function selectInterval($from, $to, $cat = null){
+        // $query = $this->getEntityManager()->createQuery("
+        //     SELECT a FROM App\Entity\Annonces a WHERE a.created_at > :from AND a.created_at < :to
+        // ")
+        //     ->setParameter(':from', $from)
+        //     ->setParameter(':to', $to)
+        // ;
+        // return $query->getResult();
         $query = $this->createQueryBuilder('a')
-            ->select('SUBSTRING(a.created_at, 1, 10) as dateAnnonces, COUNT(a) as count')
-            ->groupBy('dateAnnonces')
+            ->where('a.created_at > :from')
+            ->andWhere('a.created_at < :to')
+            ->setParameter(':from', $from)
+            ->setParameter(':to', $to);
+        if($cat != null){
+            $query->leftJoin('a.categories', 'c')
+                ->andWhere('c.id = :cat')
+                ->setParameter(':cat', $cat);
+        }
+        return $query->getQuery()->getResult();
+    }
+
+    /**
+     * Returns all Annonces per page
+     * @return void 
+     */
+    public function getPaginatedAnnonces($page, $limit){
+        $query = $this->createQueryBuilder('a')
+            ->where('a.active = 1')
+            ->orderBy('a.created_at')
+            ->setFirstResult(($page * $limit) - $limit)
+            ->setMaxResults($limit)
         ;
         return $query->getQuery()->getResult();
     }
+
+    /**
+     * Returns number of Annonces
+     * @return void 
+     */
+    public function getTotalAnnonces(){
+        $query = $this->createQueryBuilder('a')
+            ->select('COUNT(a)')
+            ->where('a.active = 1')
+        ;
+        return $query->getQuery()->getSingleScalarResult();
+    }
+
 
     // /**
     //  * @return Annonces[] Returns an array of Annonces objects
