@@ -18,8 +18,6 @@ class MainController extends AbstractController
      */
     public function index(AnnoncesRepository $annoncesRepo, Request $request)
     {
-        $annonces = $annoncesRepo->selectInterval("2020-10-01", "2020-10-31", 2);
-        dd($annonces);
         $annonces = $annoncesRepo->findBy(['active' => true], ['created_at' => 'desc'], 5);
 
         $form = $this->createForm(SearchAnnonceType::class);

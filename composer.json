@@ -8,6 +8,7 @@
         "antishov/doctrine-extensions-bundle": "^1.4",
         "dompdf/dompdf": "^0.8.6",
         "friendsofsymfony/ckeditor-bundle": "^2.2",
+        "fzaninotto/faker": "^1.9",
         "liip/imagine-bundle": "^2.3",
         "sensio/framework-extra-bundle": "^5.1",
         "symfony/asset": "5.1.*",
@@ -38,6 +39,7 @@
         "twig/string-extra": "^3.0"
     },
     "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^3.4",
         "symfony/debug-pack": "*",
         "symfony/maker-bundle": "^1.0",
         "symfony/profiler-pack": "*",
