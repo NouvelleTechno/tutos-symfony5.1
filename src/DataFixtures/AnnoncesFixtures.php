@@ -15,7 +15,7 @@ class AnnoncesFixtures extends Fixture implements DependentFixtureInterface
     {
         $faker = Faker\Factory::create('fr_FR');
 
-        for($nbAnnonces = 1; $nbAnnonces <= 20; $nbAnnonces++){
+        for($nbAnnonces = 1; $nbAnnonces <= 100; $nbAnnonces++){
             $user = $this->getReference('user_'. $faker->numberBetween(1, 30));
             $categorie = $this->getReference('categorie_'. $faker->numberBetween(1, 4));
 
@@ -27,7 +27,7 @@ class AnnoncesFixtures extends Fixture implements DependentFixtureInterface
             $annonce->setActive($faker->numberBetween(0, 1));
 
             // On uploade et on génère les images
-            for($image = 1; $image < 3; $image++){
+            for($image = 1; $image <= 3; $image++){
                 $img = $faker->image('public/uploads/images/annonces');
                 $nomImg = basename($img);
                 $imageAnnonce = new Images();
