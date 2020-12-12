@@ -5,8 +5,10 @@ namespace App\Controller;
 use App\Entity\Annonces;
 use App\Form\AnnonceContactType;
 use App\Repository\AnnoncesRepository;
+use App\Repository\CategoriesRepository;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Mailer\MailerInterface;
@@ -22,20 +24,33 @@ class AnnoncesController extends AbstractController
      * @Route("/", name="liste")
      * @return void 
      */
-    public function index(AnnoncesRepository $annoncesRepo, Request $request){
+    public function index(AnnoncesRepository $annoncesRepo, CategoriesRepository $catRepo, Request $request){
         // On définit le nombre d'éléments par page
         $limit = 10;
 
         // On récupère le numéro de page
         $page = (int)$request->query->get("page", 1);
 
-        // On récupère les annonces de la page
-        $annonces = $annoncesRepo->getPaginatedAnnonces($page, $limit);
+        // On récupère les filtres
+        $filters = $request->get("categories");
+
+        // On récupère les annonces de la page en fonction du filtre
+        $annonces = $annoncesRepo->getPaginatedAnnonces($page, $limit, $filters);
 
         // On récupère le nombre total d'annonces
-        $total = $annoncesRepo->getTotalAnnonces();
- 
-        return $this->render('annonces/index.html.twig', compact('annonces', 'total', 'limit', 'page'));
+        $total = $annoncesRepo->getTotalAnnonces($filters);
+
+        // On vérifie si on a une requête Ajax
+        if($request->get('ajax')){
+            return new JsonResponse([
+                'content' => $this->renderView('annonces/_content.html.twig', compact('annonces', 'total', 'limit', 'page'))
+            ]);
+        }
+
+        // On va chercher toutes les catégories
+        $categories = $catRepo->findAll();
+
+        return $this->render('annonces/index.html.twig', compact('annonces', 'total', 'limit', 'page', 'categories'));
     }
 
 

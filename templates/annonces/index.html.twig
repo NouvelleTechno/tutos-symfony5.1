@@ -1,76 +1,39 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des annonces
-{% endblock %}
+{# On crée des variables personnalisées #}
+{% set queryParams = app.request.query.all %}
+
+{% block title %}Liste des annonces{% endblock %}
 {% block stylesheets %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" />
 {% endblock %}
 
 {% block body %}
 <div class="container">
-	{% for annonce in annonces %}
-		<div class="grix xs2 sm3 gutter-0 card">
-			<div class="primary flex vcenter fx-center">
-        <img src="{{ asset('uploads/images/annonces/' ~ annonce.images[0].name)|imagine_filter('square') }}" alt="{{ annonce.title }}">
-			</div>
-			<div class="col-sm2">
-				<div class="card-header"><a href="{{ path('annonces_details', {slug: annonce.slug})}}">{{ annonce.title }}</a></div>
-				<div class="card-content">
-                    <p>Catégorie : {{ annonce.categories.name }}</p>
-					<p>
-						{{ annonce.content|striptags|u.truncate(50, '...') }}
-					</p>
-					<div class="txt-red">
-						{% if is_granted("ROLE_USER") %}
-                            {% set isFavorite = false %}
-							{% for favoris in annonce.favoris %}
-								{% if favoris.id == app.user.id %}
-                                    {% set isFavorite = true %}
-								{% endif %}    
-							{% endfor %}
-                            {% if isFavorite %}
-								<a href="{{ path('annonces_retrait_favoris', {id: annonce.id}) }}"><i class="fas fa-heart"></i></a>
-                            {% else %}
-								<a href="{{ path('annonces_ajout_favoris', {id: annonce.id}) }}"><i class="far fa-heart"></i></a>
-                            {% endif %}
+    <div class="grix xs1 sm5 gutter-0 card">
+        <div class="col-xs1">
+            <p>Filtrer</p>
+            <form id="filters">
+                {% for categorie in categories %}
+                    {# On vérifie si la catégorie est dans les paramètres #}
+                    {% if queryParams is not empty and queryParams.categories is defined %}
+                        {% set checked = (categorie.id in queryParams.categories) ? "checked" : "" %}
+                    {% else %}
+                        {% set checked = "" %}
+                    {% endif %}
 
-						{% else %}
-							<i class="far fa-heart"></i>
-						{% endif %}
-						
-					</div>
-				</div>
-			</div>
-		</div>
-	{% endfor %}
-    <ul class="pagination">
-        <li class="{{ (page == 1) ? 'disabled' : '' }}">
-            <a href="?page=1">
-                <i class="fas fa-step-backward"></i>
-            </a>
-        </li>    
-        <li class="{{ (page == 1) ? 'disabled' : '' }}">
-            <a href="{{ (page > 1) ? '?page=' ~ (page - 1) : '' }}">
-                <i class="fas fa-angle-left"></i>
-            </a>
-        </li>
-        {% set pages = (total / limit)|round(0, 'ceil') %}
-        {% for item in 1..pages %}
-            <li class="{{ (page == item) ? 'active' : '' }}">
-                <a href="?page={{ item }}">{{ item }}</a>
-            </li>
-        {% endfor %}
-        <li class="{{ (page == pages) ? 'disabled' : '' }}">
-            <a href="{{ (page < pages) ? '?page=' ~ (page + 1) : '' }}">
-                <i class="fas fa-angle-right"></i>
-            </a>
-        </li>
-        <li class="{{ (page == pages) ? 'disabled' : '' }}">
-            <a href="?page={{ pages }}">
-                <i class="fas fa-step-forward"></i>
-            </a>
-        </li>
-
-    </ul>
+                    <p><input type="checkbox" name="categories[]" id="cat{{categorie.id}}" value="{{categorie.id}}" {{checked}}> <label for="cat{{categorie.id}}">{{categorie.name}}</label></p>
+                {% endfor %}
+                <input type="hidden" name="page" value="{{page}}">
+            </form>
+        </div>
+        <div class="col-xs1 col-sm4" id="content">
+            {% include "annonces/_content.html.twig" %}
+        </div>
+    </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('js/filters.js') }}"></script>
 {% endblock %}

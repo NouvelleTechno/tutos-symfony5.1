@@ -82,10 +82,17 @@ class AnnoncesRepository extends ServiceEntityRepository
      * Returns all Annonces per page
      * @return void 
      */
-    public function getPaginatedAnnonces($page, $limit){
+    public function getPaginatedAnnonces($page, $limit, $filters = null){
         $query = $this->createQueryBuilder('a')
-            ->where('a.active = 1')
-            ->orderBy('a.created_at')
+            ->where('a.active = 1');
+
+        // On filtre les données
+        if($filters != null){
+            $query->andWhere('a.categories IN(:cats)')
+                ->setParameter(':cats', array_values($filters));
+        }
+
+        $query->orderBy('a.created_at')
             ->setFirstResult(($page * $limit) - $limit)
             ->setMaxResults($limit)
         ;
@@ -96,11 +103,16 @@ class AnnoncesRepository extends ServiceEntityRepository
      * Returns number of Annonces
      * @return void 
      */
-    public function getTotalAnnonces(){
+    public function getTotalAnnonces($filters = null){
         $query = $this->createQueryBuilder('a')
             ->select('COUNT(a)')
-            ->where('a.active = 1')
-        ;
+            ->where('a.active = 1');
+        // On filtre les données
+        if($filters != null){
+            $query->andWhere('a.categories IN(:cats)')
+                ->setParameter(':cats', array_values($filters));
+        }
+
         return $query->getQuery()->getSingleScalarResult();
     }
 
