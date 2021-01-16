@@ -41,6 +41,29 @@
 				</div>
 			</div>
 		</div>
+		<div class="grix xs2 sm3 gutter-0 card">
+			<div class="col-xs2 col-sm3">
+				<h2>Liste des commentaires</h2>
+				{% for comment in annonce.comments %}
+					{% if comment.parent == null %}
+						<h3>Commentaire de {{comment.nickname}}</h3>
+						<p>Publié le {{comment.createdAt|date("d/m/Y H:i") }}</p>
+						<div>{{comment.content|raw}}</div>
+						<p><a href="#ajout-commentaire" data-reply data-id="{{comment.id}}" class="btn primary press">Répondre</a></p>
+
+						{# On affiche les réponses #}
+						{% for reply in comment.replies %}
+							<p>Réponse publiée par {{reply.nickname}} le {{reply.createdAt|date("d/m/Y H:i") }}</p>
+							<div>{{reply.content|raw}}</div>
+						{% endfor %}
+					{% endif %}
+				{% endfor %}
+			</div>
+			<div class="col-xs2 col-sm3" id="ajout-commentaire">
+				<h2>Ajouter un commentaire</h2>
+				{{ form(commentForm) }}
+			</div>
+		</div>
 	</div>
 
 	<div class="modal white falling" id="modale-contact">
@@ -64,7 +87,14 @@
 {% block javascripts %}
 	<script>
 		window.onload = () => {
-			document.querySelector("#annonce_contact_title").value = "{{ annonce.title|raw }}"
+			document.querySelector("#annonce_contact_title").value = "{{ annonce.title|raw }}";
+
+			// On met un écouteur d'évènements sur tous les boutons répondre
+			document.querySelectorAll("[data-reply]").forEach(element => {
+				element.addEventListener("click", function(){
+					document.querySelector("#comments_parentid").value = this.dataset.id;
+				});
+			});
 		}
 		let caroulix = new Caroulix('#carousel');
 		let modal = new Modal('#modale-contact');

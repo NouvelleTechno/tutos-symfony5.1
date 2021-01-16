@@ -3,9 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Annonces;
+use App\Entity\Comments;
 use App\Form\AnnonceContactType;
+use App\Form\CommentsType;
 use App\Repository\AnnoncesRepository;
 use App\Repository\CategoriesRepository;
+use DateTime;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -89,9 +92,44 @@ class AnnoncesController extends AbstractController
             return $this->redirectToRoute('annonces_details', ['slug' => $annonce->getSlug()]);
         }
 
+        // Partie commentaires
+        // On crée le commentaire "vierge"
+        $comment = new Comments;
+
+        // On génère le formulaire
+        $commentForm = $this->createForm(CommentsType::class, $comment);
+
+        $commentForm->handleRequest($request);
+
+        // Traitement du formulaire
+        if($commentForm->isSubmitted() && $commentForm->isValid()){
+            $comment->setCreatedAt(new DateTime());
+            $comment->setAnnonces($annonce);
+
+            // On récupère le contenu du champ parentid
+            $parentid = $commentForm->get("parentid")->getData();
+
+            // On va chercher le commentaire correspondant
+            $em = $this->getDoctrine()->getManager();
+
+            if($parentid != null){
+                $parent = $em->getRepository(Comments::class)->find($parentid);
+            }
+
+            // On définit le parent
+            $comment->setParent($parent ?? null);
+
+            $em->persist($comment);
+            $em->flush();
+
+            $this->addFlash('message', 'Votre commentaire a bien été envoyé');
+            return $this->redirectToRoute('annonces_details', ['slug' => $annonce->getSlug()]);
+        }
+
         return $this->render('annonces/details.html.twig', [
             'annonce' => $annonce,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'commentForm' => $commentForm->createView()
         ]);
     }
 
