@@ -28,8 +28,9 @@ class AnnoncesFixtures extends Fixture implements DependentFixtureInterface
 
             // On uploade et on génère les images
             for($image = 1; $image <= 3; $image++){
-                $img = $faker->image('public/uploads/images/annonces');
-                $nomImg = basename($img);
+                // $img = $faker->image('public/uploads/images/annonces');
+
+                $nomImg = "image.png";
                 $imageAnnonce = new Images();
                 $imageAnnonce->setName($nomImg);
                 $annonce->addImage($imageAnnonce);
