@@ -5,10 +5,10 @@ namespace App\Controller;
 use App\Form\ContactType;
 use App\Form\SearchAnnonceType;
 use App\Repository\AnnoncesRepository;
+use App\Service\SendMailService;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class MainController extends AbstractController
@@ -49,26 +49,25 @@ class MainController extends AbstractController
     /**
      * @Route("/contact", name="contact")
      */
-    public function contact(Request $request, MailerInterface $mailer)
+    public function contact(Request $request, SendMailService $mail)
     {
         $form = $this->createForm(ContactType::class);
 
         $contact = $form->handleRequest($request);
 
         if($form->isSubmitted() && $form->isValid()){
-            $email = (new TemplatedEmail())
-                ->from($contact->get('email')->getData())
-                ->to('vous@domaine.fr')
-                ->subject('Contact depuis le site PetitesAnnonces')
-                ->htmlTemplate('emails/contact.html.twig')
-                ->context([
-                    'mail' => $contact->get('email')->getData(),
-                    'sujet' => $contact->get('sujet')->getData(),
-                    'message' => $contact->get('message')->getData(),
-                ])
-            ;
-
-            $mailer->send($email);
+            $context = [
+                'mail' => $contact->get('email')->getData(),
+                'sujet' => $contact->get('sujet')->getData(),
+                'message' => $contact->get('message')->getData(),
+            ];
+            $mail->send(
+                $contact->get('email')->getData(),
+                'vous@domaine.fr',
+                'Contact depuis le site PetitesAnnonces',
+                'contact',
+                $context
+            );
 
             $this->addFlash('message', 'Mail de contact envoyé');
             return $this->redirectToRoute('contact');

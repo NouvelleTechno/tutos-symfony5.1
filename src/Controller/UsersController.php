@@ -6,6 +6,7 @@ use App\Entity\Annonces;
 use App\Entity\Images;
 use App\Form\AnnoncesType;
 use App\Form\EditProfileType;
+use App\Service\ManagePicturesService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,7 +29,7 @@ class UsersController extends AbstractController
     /**
      * @Route("/users/annonces/ajout", name="users_annonces_ajout")
      */
-    public function ajoutAnnonce(Request $request)
+    public function ajoutAnnonce(Request $request, ManagePicturesService $picturesService)
     {
         $annonce = new Annonces;
 
@@ -42,22 +43,9 @@ class UsersController extends AbstractController
             // On récupère les images transmises
             $images = $form->get('images')->getData();
                 
-            // On boucle sur les images
-            foreach($images as $image){
-                // On génère un nouveau nom de fichier
-                $fichier = md5(uniqid()).'.'.$image->guessExtension();
-                
-                // On copie le fichier dans le dossier uploads
-                $image->move(
-                    $this->getParameter('images_directory'),
-                    $fichier
-                );
-                
-                // On crée l'image dans la base de données
-                $img = new Images();
-                $img->setName($fichier);
-                $annonce->addImage($img);
-            }
+            // On ajoute les images
+            $picturesService->add($images, $annonce);
+            
             $em = $this->getDoctrine()->getManager();
             $em->persist($annonce);
             $em->flush();
@@ -73,7 +61,7 @@ class UsersController extends AbstractController
     /**
      * @Route("/users/annonces/edit/{id}", name="users_annonces_edit")
      */
-    public function editAnnonce(Annonces $annonce, Request $request)
+    public function editAnnonce(Annonces $annonce, Request $request, ManagePicturesService $picturesService)
     {
         $form = $this->createForm(AnnoncesType::class, $annonce);
 
@@ -84,22 +72,9 @@ class UsersController extends AbstractController
             // On récupère les images transmises
             $images = $form->get('images')->getData();
                 
-            // On boucle sur les images
-            foreach($images as $image){
-                // On génère un nouveau nom de fichier
-                $fichier = md5(uniqid()).'.'.$image->guessExtension();
-                
-                // On copie le fichier dans le dossier uploads
-                $image->move(
-                    $this->getParameter('images_directory'),
-                    $fichier
-                );
-                
-                // On crée l'image dans la base de données
-                $img = new Images();
-                $img->setName($fichier);
-                $annonce->addImage($img);
-            }
+            // On ajoute les images
+            $picturesService->add($images, $annonce);
+
             $em = $this->getDoctrine()->getManager();
             $em->persist($annonce);
             $em->flush();
