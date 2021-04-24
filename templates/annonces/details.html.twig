@@ -38,6 +38,16 @@
 					<p>
 						<button class="btn primary press modal-trigger" data-target="modale-contact">Contacter l'annonceur</button>
 					</p>
+                    {% if is_granted("annonce_edit", annonce) %}
+                    <p>
+                        <a href="{{ path("users_annonces_edit", {id: annonce.id})}}" class="btn primary press">Modifier</a>
+                    </p>
+                    {% endif %}
+                    {% if is_granted("annonce_delete", annonce) %}
+                    <p>
+                        <a href="{{ path("users_annonces_edit", {id: annonce.id})}}" class="btn red press">Supprimer</a>
+                    </p>
+                    {% endif %}
 				</div>
 			</div>
 		</div>

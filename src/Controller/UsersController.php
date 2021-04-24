@@ -63,6 +63,7 @@ class UsersController extends AbstractController
      */
     public function editAnnonce(Annonces $annonce, Request $request, ManagePicturesService $picturesService)
     {
+        $this->denyAccessUnlessGranted('annonce_edit', $annonce);
         $form = $this->createForm(AnnoncesType::class, $annonce);
 
         $form->handleRequest($request);
