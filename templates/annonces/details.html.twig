@@ -71,7 +71,12 @@
 			</div>
 			<div class="col-xs2 col-sm3" id="ajout-commentaire">
 				<h2>Ajouter un commentaire</h2>
-				{{ form(commentForm) }}
+				{{ form_start(commentForm) }}
+				    {{ form_row(commentForm.email) }}
+				    {{ form_row(commentForm.nickname) }}
+                    <p>Message</p>
+                    <div id="editor"></div>
+				{{ form_end(commentForm) }}
 			</div>
 		</div>
 	</div>
@@ -95,6 +100,8 @@
 {% endblock %}
 
 {% block javascripts %}
+    <script src="{{ asset('ckeditor5/ckeditor.js') }}"></script>
+    <script src="{{ asset('js/ckeditor.js') }}"></script>
 	<script>
 		window.onload = () => {
 			document.querySelector("#annonce_contact_title").value = "{{ annonce.title|raw }}";

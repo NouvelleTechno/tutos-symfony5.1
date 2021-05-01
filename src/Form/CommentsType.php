@@ -32,12 +32,7 @@ class CommentsType extends AbstractType
                     'class' => 'form-control'
                 ]
             ])
-            ->add('content', CKEditorType::class, [
-                'label' => 'Votre commentaire',
-                'attr' => [
-                    'class' => 'form-control'
-                ]
-            ])
+            ->add('content', HiddenType::class)
             ->add('rgpd', CheckboxType::class, [
                 'constraints' => [
                     new NotBlank()

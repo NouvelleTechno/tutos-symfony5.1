@@ -8,6 +8,16 @@
        		<div class="p-3 my-2 rounded-2 success">{{ message }}</div>
     	{% endfor %}
         <h1>Nous contacter</h1>
-        {{ form(form) }}
+        {{ form_start(form) }}
+            {{ form_row(form.email) }}
+            {{ form_row(form.sujet) }}
+            <p>Message</p>
+            <div id="editor"></div>
+        {{ form_end(form) }}
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('ckeditor5/ckeditor.js') }}"></script>
+    <script src="{{ asset('js/ckeditor.js') }}"></script>
 {% endblock %}

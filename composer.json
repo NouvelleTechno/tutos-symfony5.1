@@ -8,7 +8,6 @@
         "antishov/doctrine-extensions-bundle": "^1.4",
         "dompdf/dompdf": "^0.8.6",
         "fakerphp/faker": "^1.14",
-        "friendsofsymfony/ckeditor-bundle": "^2.2",
         "liip/imagine-bundle": "^2.3",
         "sensio/framework-extra-bundle": "^5.1",
         "symfony/asset": "5.1.*",
