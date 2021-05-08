@@ -75,6 +75,12 @@ class Annonces
      */
     private $comments;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=Departements::class, inversedBy="annonces")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $departements;
+
     public function __construct()
     {
         $this->images = new ArrayCollection();
@@ -240,6 +246,18 @@ class Annonces
                 $comment->setAnnonces(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getDepartements(): ?Departements
+    {
+        return $this->departements;
+    }
+
+    public function setDepartements(?Departements $departements): self
+    {
+        $this->departements = $departements;
 
         return $this;
     }

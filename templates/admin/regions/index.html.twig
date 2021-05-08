@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gérer les régions{% endblock %}
+
+{% block body %}
+	<h1>Gérer les régions</h1>
+    <a href="{{ path("admin_regions_ajout") }}" class="btn blue">Ajouter une catégorie</a>
+	<table class="table striped">
+		<thead>
+			<tr>
+				<th>ID</th>
+				<th>Nom</th>
+				<th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+        {% for region in regions %}            
+			<tr>
+				<td>{{region.id}}</td>
+				<td>{{region.name}}</td>
+				<td class="text-center">
+                    {# <a href="{{ path("admin_regions_modifier", {id: region.id}) }}" class="btn blue">Modifier</a> #}
+                </td>
+			</tr>
+        {% endfor %}
+		</tbody>
+	</table>
+{% endblock %}

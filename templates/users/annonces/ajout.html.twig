@@ -9,23 +9,59 @@
     <h1>Ajouter une annonce</h1>
 {% endif %}
 {{ form_start(form) }}
-    {{ form_widget(form) }}
+    {{ form_row(form.title) }}
+    {{ form_row(form.content) }}
+    <p>Contenu</p>
+    <div id="editor"></div>
+    {{ form_row(form.categories) }}
+    {{ form_row(form.images) }}
 
     {# Si la route est "annonces_edit on affiche les images #}
 	{% if app.request.attributes.get('_route') == 'users_annonces_edit' %}
         <h2>Images</h2>
-        {% for image in annonce.images %}
+        {# {% for image in annonce.images %}
             <div>
                 <img src="{{ asset('/uploads/images/annonces/'~image.name) }}" alt="" width="150">
 
-                {# On ajoute un lien permettant de supprimer une image (sera géré en Ajax) #}
+                {# On ajoute un lien permettant de supprimer une image (sera géré en Ajax) 
                 <a href="{{ path('annonces_delete_image', {id: image.id})}}" data-delete data-token="{{ csrf_token('delete' ~ image.id )}}">Supprimer</a>
             </div>
-        {% endfor %}
+        {% endfor %} #}
     {% endif %}
 {{ form_end(form) }}
 {% endblock %}
 
 {% block javascripts %}
+    <script src="{{ asset('ckeditor5/ckeditor.js') }}"></script>
+    <script src="{{ asset('js/ckeditor.js') }}"></script>
     <script src="{{ asset('js/images.js') }}"></script>
+    <script>
+        window.onload = () => {
+            // On va chercher la région
+            let region = document.querySelector("#annonces_regions");
+
+            region.addEventListener("change", function(){
+                let form = this.closest("form");
+                let data = this.name + "=" + this.value;
+                
+                fetch(form.action, {
+                    method: form.getAttribute("method"),
+                    body: data,
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded; charset:UTF-8"
+                    }
+                })
+                .then(response => response.text())
+                .then(html => {
+                    let content = document.createElement("html");
+                    content.innerHTML = html;
+                    let nouveauSelect = content.querySelector("#annonces_departements");
+                    document.querySelector("#annonces_departements").replaceWith(nouveauSelect);
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+            });
+        }
+    </script>
 {% endblock %}
