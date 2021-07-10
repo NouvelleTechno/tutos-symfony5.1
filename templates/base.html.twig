@@ -11,10 +11,21 @@
     <body>
         <header>
         <nav class="navbar primary">
-            <a href="{{ path('app_home') }}" class="navbar-brand">PetitesAnnonces</a>
+            <a href="{{ path('app_home') }}" class="navbar-brand">{{titre}}</a>
             <div class="navbar-menu ml-auto">
             <a class="navbar-link" href="#">Accueil</a>
-            <a class="navbar-link" href="#">Link 2</a>
+            <div class="dropdown" id="dropdown">
+                <a class="navbar-link dropdown-trigger">
+                    Catégories
+                </a>
+                <div class="dropdown-content white shadow-1 rouded-1">
+                    {% for cat in cats.getCategories %}
+                        <a href="">{{cat.name}}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            
+
             <a class="navbar-link" href="#">Link 3</a>
             <a class="navbar-link" href="#">Link 4</a>
             </div>
@@ -26,13 +37,17 @@
         </main>
 
         <footer class="footer primary">
-        Copyright © 2019 - Example
+        Copyright © 2019 - {{titre}}
         </footer>
 
        
 
         <script src="https://cdn.jsdelivr.net/npm/axentix@0.5.3/dist/js/axentix.min.js"></script>
-        {% block javascripts %}{% endblock %}
+        {% block javascripts %}
+        <script>
+            let drop = new Axentix.Dropdown('#dropdown')
+        </script>
+        {% endblock %}
         <script src="{{ asset('js/scripts.js') }}"></script>
     </body>
 </html>

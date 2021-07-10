@@ -1,2 +1,5 @@
 twig:
     default_path: '%kernel.project_dir%/templates'
+    globals:
+        titre: 'Le titre de mon site'
+        cats: '@App\Twig\CatsExtension'
