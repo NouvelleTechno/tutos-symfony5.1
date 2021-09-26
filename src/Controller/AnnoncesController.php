@@ -28,7 +28,7 @@ class AnnoncesController extends AbstractController
      * @Route("/", name="liste")
      * @return void 
      */
-    public function index(AnnoncesRepository $annoncesRepo, CategoriesRepository $catRepo, Request $request){
+    public function index(AnnoncesRepository $annoncesRepo, CategoriesRepository $catRepo, Request $request, CacheInterface $cache){
         // On définit le nombre d'éléments par page
         $limit = 10;
 
@@ -52,7 +52,11 @@ class AnnoncesController extends AbstractController
         }
 
         // On va chercher toutes les catégories
-        $categories = $catRepo->findAll();
+        $categories = $cache->get('categories_list', function(ItemInterface $item) use($catRepo){
+            $item->expiresAfter(3600);
+
+            return $catRepo->findAll();
+        });
 
         return $this->render('annonces/index.html.twig', compact('annonces', 'total', 'limit', 'page', 'categories'));
     }

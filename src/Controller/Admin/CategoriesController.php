@@ -8,6 +8,7 @@ use App\Repository\CategoriesRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Cache\CacheInterface;
 
 /**
  * @Route("/admin/categories", name="admin_categories_")
@@ -28,7 +29,7 @@ class CategoriesController extends AbstractController
     /**
      * @Route("/ajout", name="ajout")
      */
-    public function ajoutCategorie(Request $request)
+    public function ajoutCategorie(Request $request, CacheInterface $cache)
     {
         $categorie = new Categories;
 
@@ -41,6 +42,9 @@ class CategoriesController extends AbstractController
             $em->persist($categorie);
             $em->flush();
 
+            // On efface le cache
+            $cache->delete('categories_list');
+
             return $this->redirectToRoute('admin_categories_home');
         }
 
@@ -52,7 +56,7 @@ class CategoriesController extends AbstractController
     /**
      * @Route("/modifier/{id}", name="modifier")
      */
-    public function ModifCategorie(Categories $categorie, Request $request)
+    public function ModifCategorie(Categories $categorie, Request $request, CacheInterface $cache)
     {
         $form = $this->createForm(CategoriesType::class, $categorie);
 
@@ -62,6 +66,9 @@ class CategoriesController extends AbstractController
             $em = $this->getDoctrine()->getManager();
             $em->persist($categorie);
             $em->flush();
+
+            // On supprime le cache
+            $cache->delete('categories_list');
 
             return $this->redirectToRoute('admin_categories_home');
         }
