@@ -4,6 +4,7 @@ namespace App\Twig;
 
 use App\Entity\Categories;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -25,6 +26,12 @@ class CatsExtension extends AbstractExtension
 
     public function getCategories()
     {
-        return $this->em->getRepository(Categories::class)->findBy([], ['name' => 'ASC']);
+        $cache = new FilesystemAdapter();
+
+        $categories = $cache->get('categories_list', function(){
+            return $this->em->getRepository(Categories::class)->findBy([], ['name' => 'ASC']);
+        });
+
+        return $categories;
     }
 }

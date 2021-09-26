@@ -15,6 +15,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * @Route("/annonces", name="annonces_")
@@ -59,9 +61,19 @@ class AnnoncesController extends AbstractController
     /**
      * @Route("/details/{slug}", name="details")
      */
-    public function details($slug, AnnoncesRepository $annoncesRepo, Request $request, SendMailService $mail)
+    public function details($slug, AnnoncesRepository $annoncesRepo, Request $request, SendMailService $mail, CacheInterface $cache)
     {
-        $annonce = $annoncesRepo->findOneBy(['slug' => $slug]);
+        // $annonce = $annoncesRepo->findOneBy(['slug' => $slug]);
+        $annonce = $cache->get('annonce_details_'.$slug, function(ItemInterface $item) use($annoncesRepo, $slug){
+            $item->expiresAfter(20);
+            return $annoncesRepo->findOneBy(['slug' => $slug]);
+        });
+
+        // $texte = $cache->get('texte_details', function(ItemInterface $item){
+        //     $item->expiresAfter(20);
+        //     return $this->fonctionLongue();
+        // });
+        // $texte = $this->fonctionLongue();
 
         if(!$annonce){
             throw new NotFoundHttpException('Pas d\'annonce trouvée');
@@ -156,5 +168,10 @@ class AnnoncesController extends AbstractController
         $em->persist($annonce);
         $em->flush();
         return $this->redirectToRoute('app_home');
+    }
+
+    private function fonctionLongue(){
+        sleep(3);
+        return "Brouette";
     }
 }
