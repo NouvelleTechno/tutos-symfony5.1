@@ -3,7 +3,7 @@ window.onload = () => {
     let links = document.querySelectorAll("[data-delete]")
     
     // On boucle sur links
-    for(link of links){
+    for(let link of links){
         // On écoute le clic
         link.addEventListener("click", function(e){
             // On empêche la navigation
